@@ -166,8 +166,7 @@ ANGKOR/
 
 ## About
 
-ANGKOR is developed at the **Institute of Technology of Cambodia (ITC)**  
-as part of a research initiative to build open-source nuclear reactor analysis tools accessible to the global nuclear engineering community.
+ANGKOR is developed at the **Institute of Technology of Cambodia (ITC)** as part of a research initiative to build open-source nuclear reactor analysis tools accessible to the global nuclear engineering community.
 
 ---
 
