@@ -278,7 +278,7 @@ class GeometryVisualizer:
         ax.set_ylim(0, self.engine.domain_y)
         ax.set_xlabel("x (cm)", fontsize=11)
         ax.set_ylabel("y (cm)", fontsize=11)
-        ax.set_title("PyReactor - 2D Geometry Map", fontsize=13)
+        ax.set_title("ANGKOR - 2D Geometry Map", fontsize=13)
         ax.set_aspect("equal")
         plt.tight_layout()
         plt.show()
