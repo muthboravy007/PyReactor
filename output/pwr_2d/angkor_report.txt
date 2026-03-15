@@ -1,0 +1,7 @@
+ANGKOR Simulation Report
+========================================
+Title  : PWR 2D Slab Benchmark
+k-eff  : 1.179618
+Domain : 100.0 x 100.0 cm
+Mesh   : 100 x 100
+Peak power location: (49.5 cm)
