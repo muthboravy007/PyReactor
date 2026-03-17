@@ -71,19 +71,33 @@ class InputReader:
     
     def _parse_materials(self):
         """Read material cross sections from YAML input file"""
-        mats = self.data["materials"]
+        mats = self.data["materials"] 
             
-        for mat_name, props in mats.items():  
-            self.materials[mat_name] = {
-                "D1"        : props["D1"],   
-                "D2"        : props["D2"],   
-                "sigma_a1"  : props["sigma_a1"],
-                "sigma_a2"  : props["sigma_a2"],
-                "sigma_s12" : props["sigma_s12"],
-                "nu_sigma_f1": props["nu_sigma_f1"],
-                "nu_sigma_f2": props["nu_sigma_f2"],
-            }
+        for mat_name, props in mats.items():
+
+        # Detect format by checking which keys exist
+            if "groups" in props:
+                # --- MULTIGROUP FORMAT ---
+                self.materials[mat_name] = {
+                    "groups"     : props["groups"],
+                    "D"          : props["D"],
+                    "sigma_a"    : props["sigma_a"],
+                    "nu_sigma_f" : props["nu_sigma_f"],
+                    "sigma_s"    : props["sigma_s"],
+                }
+            else:
+                # --- 2-GROUP FORMAT ---
+                self.materials[mat_name] = {
+                    "D1"          : props["D1"],
+                    "D2"          : props["D2"],
+                    "sigma_a1"    : props["sigma_a1"],
+                    "sigma_a2"    : props["sigma_a2"],
+                    "sigma_s12"   : props["sigma_s12"],
+                    "nu_sigma_f1" : props["nu_sigma_f1"],
+                    "nu_sigma_f2" : props["nu_sigma_f2"],
+                }
         self.engine
+        
     
     def _parse_solver(self):
         """Read solver settings from YAML."""

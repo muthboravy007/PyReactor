@@ -1,0 +1,59 @@
+# =============================================
+# ANGKOR Input File — PWR 2D Slab 4-Group
+# =============================================
+title: "PWR 2D Slab - 4 Groups"
+
+geometry:
+  type: 2D_rectangular
+  domain_x: 100.0
+  domain_y: 100.0
+  nx: 50
+  ny: 50
+
+regions:
+  - name: left_reflector
+    x_min: 0.0
+    x_max: 20.0
+    y_min: 0.0
+    y_max: 100.0
+    material: water
+  
+  - name: fuel
+    x_min: 20.0
+    x_max: 80.0
+    y_min: 0.0
+    y_max: 100.0
+    material: uo2_fuel
+  
+  - name: right_reflector
+    x_min: 80.0
+    x_max: 100.0
+    y_min: 0.0
+    y_max: 100.0
+    material: water
+
+materials:
+  uo2_fuel:
+    groups: 4
+    D:          [1.50, 1.20, 0.80, 0.37]
+    sigma_a:    [0.005, 0.010, 0.030, 0.082]
+    nu_sigma_f: [0.002, 0.005, 0.010, 0.135]
+    sigma_s:
+      - [0.00, 0.02, 0.00, 0.00]
+      - [0.00, 0.00, 0.03, 0.00]
+      - [0.00, 0.00, 0.00, 0.04]
+      - [0.00, 0.00, 0.00, 0.00]
+
+  water:
+    groups: 4
+    D:          [1.30, 1.10, 0.60, 0.16]
+    sigma_a:    [0.0002, 0.0005, 0.001, 0.021]
+    nu_sigma_f: [0.0, 0.0, 0.0, 0.0]
+    sigma_s:
+      - [0.00, 0.03, 0.00, 0.00]
+      - [0.00, 0.00, 0.04, 0.00]
+      - [0.00, 0.00, 0.00, 0.05]
+      - [0.00, 0.00, 0.00, 0.00]
+solver:
+  max_iteration: 1000
+  convergence:  1.0e-6

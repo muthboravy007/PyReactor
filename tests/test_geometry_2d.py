@@ -34,12 +34,9 @@ def test_region_invalid():
 # =============================================
 def test_engine_material_map():
     engine = GeometryEngine(100.0, 100.0)
-    engine.add_region(Region("left",  0.0,  20.0,
-                             0.0, 100.0, "water"))
-    engine.add_region(Region("fuel", 20.0,  80.0,
-                             0.0, 100.0, "uo2_fuel"))
-    engine.add_region(Region("right",80.0, 100.0,
-                             0.0, 100.0, "water"))
+    engine.add_region(Region("left",  0.0,  20.0, 0.0, 100.0, "water"))
+    engine.add_region(Region("fuel", 20.0,  80.0, 0.0, 100.0, "uo2_fuel"))
+    engine.add_region(Region("right",80.0, 100.0, 0.0, 100.0, "water"))
     engine.build_mesh(10, 10)
 
     # Cell (0,0) is at x=5cm → should be water
