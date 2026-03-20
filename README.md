@@ -193,3 +193,15 @@ MUTH Boravy, "ANGKOR: Advanced Neutron Group-diffusion K-eigenvalue
 Of Reactors", Institute of Technology of Cambodia, 2025.
 https://github.com/muthboravy007/ANGKOR
 ```
+
+---
+
+## Citation
+
+If you use ANGKOR in your research, please cite:
+
+```
+MUTH Boravy, "ANGKOR: Advanced Neutron Group-diffusion K-eigenvalue
+Of Reactors", Institute of Technology of Cambodia, 2025.
+https://github.com/muthboravy007/ANGKOR
+```
