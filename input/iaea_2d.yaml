@@ -1,0 +1,136 @@
+# =============================================
+# ANGKOR Input File
+# IAEA 2D PWR Benchmark — Quarter Core
+# Reference k-eff: 1.02959
+# =============================================
+
+title: "IAEA 2D PWR Benchmark"
+
+geometry:
+  type: 2D_rectangular
+  domain_x: 170.0
+  domain_y: 170.0
+  nx: 170
+  ny: 170
+
+regions:
+  # ── Row 1 (y=0-10): F1 F1 F1 F1 F1 F1 F1 F1 | ref ──
+  - {name: r1c1, x_min:  0, x_max: 10, y_min: 0, y_max: 10, material: fuel1}
+  - {name: r1c2, x_min: 10, x_max: 20, y_min: 0, y_max: 10, material: fuel1}
+  - {name: r1c3, x_min: 20, x_max: 30, y_min: 0, y_max: 10, material: fuel1}
+  - {name: r1c4, x_min: 30, x_max: 40, y_min: 0, y_max: 10, material: fuel1}
+  - {name: r1c5, x_min: 40, x_max: 50, y_min: 0, y_max: 10, material: fuel1}
+  - {name: r1c6, x_min: 50, x_max: 60, y_min: 0, y_max: 10, material: fuel1}
+  - {name: r1c7, x_min: 60, x_max: 70, y_min: 0, y_max: 10, material: fuel1}
+  - {name: r1c8, x_min: 70, x_max: 80, y_min: 0, y_max: 10, material: fuel1}
+
+  # ── Row 2 (y=10-20): F1 F1 F1 F1 F1 F1 F1 F2 | ref ──
+  - {name: r2c1, x_min:  0, x_max: 10, y_min: 10, y_max: 20, material: fuel1}
+  - {name: r2c2, x_min: 10, x_max: 20, y_min: 10, y_max: 20, material: fuel1}
+  - {name: r2c3, x_min: 20, x_max: 30, y_min: 10, y_max: 20, material: fuel1}
+  - {name: r2c4, x_min: 30, x_max: 40, y_min: 10, y_max: 20, material: fuel1}
+  - {name: r2c5, x_min: 40, x_max: 50, y_min: 10, y_max: 20, material: fuel1}
+  - {name: r2c6, x_min: 50, x_max: 60, y_min: 10, y_max: 20, material: fuel1}
+  - {name: r2c7, x_min: 60, x_max: 70, y_min: 10, y_max: 20, material: fuel1}
+  - {name: r2c8, x_min: 70, x_max: 80, y_min: 10, y_max: 20, material: fuel2}
+
+  # ── Row 3 (y=20-30): F1 F1 F1 F1 F1 F2 F2 | ref ──
+  - {name: r3c1, x_min:  0, x_max: 10, y_min: 20, y_max: 30, material: fuel1}
+  - {name: r3c2, x_min: 10, x_max: 20, y_min: 20, y_max: 30, material: fuel1}
+  - {name: r3c3, x_min: 20, x_max: 30, y_min: 20, y_max: 30, material: fuel1}
+  - {name: r3c4, x_min: 30, x_max: 40, y_min: 20, y_max: 30, material: fuel1}
+  - {name: r3c5, x_min: 40, x_max: 50, y_min: 20, y_max: 30, material: fuel1}
+  - {name: r3c6, x_min: 50, x_max: 60, y_min: 20, y_max: 30, material: fuel2}
+  - {name: r3c7, x_min: 60, x_max: 70, y_min: 20, y_max: 30, material: fuel2}
+  - {name: ref_r3, x_min: 70, x_max: 80, y_min: 20, y_max: 30, material: reflector}
+
+  # ── Row 4 (y=30-40): F1 F1 F1 F1 F2 F2 | ref ──
+  - {name: r4c1, x_min:  0, x_max: 10, y_min: 30, y_max: 40, material: fuel1}
+  - {name: r4c2, x_min: 10, x_max: 20, y_min: 30, y_max: 40, material: fuel1}
+  - {name: r4c3, x_min: 20, x_max: 30, y_min: 30, y_max: 40, material: fuel1}
+  - {name: r4c4, x_min: 30, x_max: 40, y_min: 30, y_max: 40, material: fuel1}
+  - {name: r4c5, x_min: 40, x_max: 50, y_min: 30, y_max: 40, material: fuel2}
+  - {name: r4c6, x_min: 50, x_max: 60, y_min: 30, y_max: 40, material: fuel2}
+  - {name: ref_r4, x_min: 60, x_max: 80, y_min: 30, y_max: 40, material: reflector}
+
+  # ── Row 5 (y=40-50): F1 F1 F1 F2 F2 Cr | ref ──
+  - {name: r5c1, x_min:  0, x_max: 10, y_min: 40, y_max: 50, material: fuel1}
+  - {name: r5c2, x_min: 10, x_max: 20, y_min: 40, y_max: 50, material: fuel1}
+  - {name: r5c3, x_min: 20, x_max: 30, y_min: 40, y_max: 50, material: fuel1}
+  - {name: r5c4, x_min: 30, x_max: 40, y_min: 40, y_max: 50, material: fuel2}
+  - {name: r5c5, x_min: 40, x_max: 50, y_min: 40, y_max: 50, material: fuel2}
+  - {name: r5c6, x_min: 50, x_max: 60, y_min: 40, y_max: 50, material: fuel_cr}
+  - {name: ref_r5, x_min: 60, x_max: 80, y_min: 40, y_max: 50, material: reflector}
+
+  # ── Row 6 (y=50-60): F1 F1 F2 F2 Cr | ref ──
+  - {name: r6c1, x_min:  0, x_max: 10, y_min: 50, y_max: 60, material: fuel1}
+  - {name: r6c2, x_min: 10, x_max: 20, y_min: 50, y_max: 60, material: fuel1}
+  - {name: r6c3, x_min: 20, x_max: 30, y_min: 50, y_max: 60, material: fuel2}
+  - {name: r6c4, x_min: 30, x_max: 40, y_min: 50, y_max: 60, material: fuel2}
+  - {name: r6c5, x_min: 40, x_max: 50, y_min: 50, y_max: 60, material: fuel_cr}
+  - {name: ref_r6, x_min: 50, x_max: 80, y_min: 50, y_max: 60, material: reflector}
+
+  # ── Row 7 (y=60-70): F1 F1 F2 | ref ──
+  - {name: r7c1, x_min:  0, x_max: 10, y_min: 60, y_max: 70, material: fuel1}
+  - {name: r7c2, x_min: 10, x_max: 20, y_min: 60, y_max: 70, material: fuel1}
+  - {name: r7c3, x_min: 20, x_max: 30, y_min: 60, y_max: 70, material: fuel2}
+  - {name: ref_r7, x_min: 30, x_max: 80, y_min: 60, y_max: 70, material: reflector}
+
+  # ── Row 8 (y=70-80): F1 F2 | ref ──
+  - {name: r8c1, x_min:  0, x_max: 10, y_min: 70, y_max: 80, material: fuel1}
+  - {name: r8c2, x_min: 10, x_max: 20, y_min: 70, y_max: 80, material: fuel2}
+  - {name: ref_r8, x_min: 20, x_max: 80, y_min: 70, y_max: 80, material: reflector}
+
+  # ── Outer reflector ────────────────────────────────────────
+  # Right reflector strip (x=80-170, full height)
+  - {name: ref_right, x_min: 80, x_max: 170, y_min: 0, y_max: 170, material: reflector}
+
+  # Top reflector strip (y=80-170, left portion)
+  - {name: ref_top, x_min: 0, x_max: 80, y_min: 80, y_max: 170, material: reflector}
+
+materials:
+  fuel1:
+    D1: 1.500
+    D2: 0.400
+    sigma_a1: 0.0100
+    sigma_a2: 0.0850
+    sigma_s12: 0.0200
+    nu_sigma_f1: 0.000
+    nu_sigma_f2: 0.135
+
+  fuel2:
+    D1: 1.500
+    D2: 0.400
+    sigma_a1: 0.0100
+    sigma_a2: 0.1300
+    sigma_s12: 0.0200
+    nu_sigma_f1: 0.000
+    nu_sigma_f2: 0.135
+
+  fuel_cr:
+    D1: 1.500
+    D2: 0.400
+    sigma_a1: 0.0100
+    sigma_a2: 0.1800
+    sigma_s12: 0.0200
+    nu_sigma_f1: 0.000
+    nu_sigma_f2: 0.135
+
+  reflector:
+    D1: 2.000
+    D2: 0.300
+    sigma_a1: 0.0000
+    sigma_a2: 0.0100
+    sigma_s12: 0.0400
+    nu_sigma_f1: 0.000
+    nu_sigma_f2: 0.000
+
+solver:
+  max_iterations: 1000
+  convergence: 1.0e-6
+
+boundary_conditions:
+  left:   reflective
+  bottom: reflective
+  right:  vacuum
+  top:    vacuum
