@@ -16,10 +16,14 @@ class Solver2D:
     Using finite difference method and power iterations.
     """
     
-    def __init__(self, engine, materials, settings):
+    def __init__(self, engine, materials, settings, boundary=None):
         self.engine     = engine
         self.materials  = materials 
         self.settings   = settings 
+        self.bc = boundary or {
+                "left": "vacuum", "right": "vacuum",
+                "top": "vacuum",  "bottom": "vacuum"
+            }
     
         # Mesh dimension - get from engine 
         self.nx     = len(self.engine.x_centers)
@@ -61,6 +65,26 @@ class Solver2D:
             "nu_sigma_f1"   : mat["nu_sigma_f1"],
             "nu_sigma_f2"   : mat["nu_sigma_f2"]
         }
+    
+    def _boundary_coeff(self, D, h, side):
+            """
+            Return boundary leakage coefficient.
+            Simple vacuum:      D / h²
+            Extrapolated vacuum: D / (h × (h/2 + 2.1312×D))
+            Reflective:         0 (no leakage)
+            """
+            bc_type = self.bc.get(side, "vacuum")
+            # print(f"    DEBUG: side ={side}, bc_type={bc_type}, D={D}")
+            if bc_type == "reflective":
+                return 0.0                               
+            elif bc_type == "vacuum":
+                # Simple zero-flux BC:
+                # return D / h*
+                # Extrapolated BC (more accurate):
+                d_ex = 2.1312 * D
+                return D / (h * (h/2 + d_ex))           
+            else:
+                return D / h**2                          
 
     def _build_matrices(self):
         """
@@ -101,6 +125,7 @@ class Solver2D:
         # --------------------------------------
         # Main Loop - loop over every cell (i,j)
         # --------------------------------------
+            
         for j in range(ny):
             for i in range(nx):
                 
@@ -126,17 +151,13 @@ class Solver2D:
                 Ey2 = D2/dy**2
                 
                 # Center coeffiicent 
-                C1 = 2*Ex1 + 2*Ey1 + siga1 + sigs12 
-                C2 = 2*Ex2 + 2*Ey2 + siga2
+                C1 = siga1 + sigs12 
+                C2 = siga2
                 
                 # ---------------------------------------
                 # Group 1 row: index = n 
                 # Group 2 row: index = n + N 
                 # ---------------------------------------
-                
-                # --- Diagonal (center) terms -----------
-                add_A(n, n, C1)
-                add_A(n+N, n+N, C2)
                 
                 # --- Scattering: group 1 to group 2 ----
                 # - Scattering Removes from group 1 
@@ -149,29 +170,53 @@ class Solver2D:
                 add_F(n, n+N, nusigf2) 
                 
                 # --- Neighbor terms (5 points stencil) -
-                # West (left) 
-                if i >0:
-                    n_left = j*nx+(i-1)
-                    add_A(n, n_left, -Ex1)
+                # --- West boundary ---
+                if i > 0:
+                    n_left = j*nx + (i-1)
+                    add_A(n,   n_left,   -Ex1)
                     add_A(n+N, n_left+N, -Ex2)
-                
-                # East (right)
+                    C1 += Ex1
+                    C2 += Ex2
+                else:
+                    C1 += self._boundary_coeff(D1, dx, "left")   
+                    C2 += self._boundary_coeff(D2, dx, "left")   
+
+                # --- East boundary ---
                 if i < nx-1:
-                    n_right = j*nx+(i+1)
-                    add_A(n, n_right, -Ex1)
+                    n_right = j*nx + (i+1)
+                    add_A(n,   n_right,   -Ex1)
                     add_A(n+N, n_right+N, -Ex2)
-                
-                # South (down)
-                if j>0:
-                    n_down = (j-1)*nx+i 
-                    add_A(n,n_down, -Ey1)
+                    C1 += Ex1
+                    C2 += Ex2
+                else: 
+                    C1 += self._boundary_coeff(D1, dx, "right")  
+                    C2 += self._boundary_coeff(D2, dx, "right")  
+
+                # --- South boundary ---
+                if j > 0:
+                    n_down = (j-1)*nx + i
+                    add_A(n,   n_down,   -Ey1)
                     add_A(n+N, n_down+N, -Ey2)
-                
-                # North (up)
-                if j< ny-1:
-                    n_up = (j+1)*nx+i
-                    add_A(n,n_up, -Ey1)
+                    C1 += Ey1
+                    C2 += Ey2
+                else:
+                    C1 += self._boundary_coeff(D1, dy, "bottom") # ← NEW
+                    C2 += self._boundary_coeff(D2, dy, "bottom") # ← NEW
+
+                # --- North boundary ---
+                if j < ny-1:
+                    n_up = (j+1)*nx + i
+                    add_A(n,   n_up,   -Ey1)
                     add_A(n+N, n_up+N, -Ey2)
+                    C1 += Ey1
+                    C2 += Ey2
+                else:
+                    C1 += self._boundary_coeff(D1, dy, "top")    # ← NEW
+                    C2 += self._boundary_coeff(D2, dy, "top")    # ← NEW
+                
+                # --- Diagonal (center) terms -----------
+                add_A(n, n, C1)
+                add_A(n+N, n+N, C2)
     
         # -----------------------------------------
         # --- Build sparse matrix from triplets ---
@@ -186,6 +231,13 @@ class Solver2D:
             (vals_F,(rows_F, cols_F)),
             shape=(size,size)
         )
+        
+        # print(f"  Diagonal sample (boundary cell): {self.A[0,0]:.6f}")
+        # print(f"  Diagonal sample (interior cell): {self.A[1000,1000]:.6f}")
+        
+        # DEBUG — remove after confirming:
+        # print(f"  A[0,0] = {self.A[0,0]:.6f}")      # boundary cell
+        # print(f"  A[500,500] = {self.A[500,500]:.6f}")  # interior cell
         
         print(f" Matrix A: {self.A.shape}," f"{self.A.nnz} non-zeros")
         print(f" Matrix F: {self.F.shape}," f"{self.F.nnz} non-zeros")
@@ -255,8 +307,7 @@ class Solver2D:
         print(f"  k-eff = {self.k_eff:.6f}")
         print(f"  {'='*40}")
         return self.k_eff, self.flux1, self.flux2    
-                
-            
+                 
     
 # TEST 
 if __name__ == "__main__":

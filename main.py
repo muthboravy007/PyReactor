@@ -8,6 +8,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'angkor'))
 from input_reader import InputReader
 from solver_2d    import Solver2D
 from output_2d    import Output2D
+from solver_mg    import SolverMG
+from output_mg    import OutputMG  
 
 # ------------------------------------
 # - BANNER 
@@ -56,11 +58,27 @@ def main(input_file):
     print(" [2/3]   Running 2D diffusion solver...")
     t2 = time.time()
     
-    solver = Solver2D(
-        engine      = reader.engine,
-        materials   = reader.materials,
-        settings    = reader.solver
-    )
+    first_mat = next(iter(reader.materials.values()))
+    G = first_mat.get("groups",2)
+   
+    if "D1" in first_mat: 
+        print(" Using Solver2D (2-groups)")
+        
+        solver = Solver2D(
+            engine    = reader.engine,
+            materials = reader.materials,
+            settings  = reader.solver,
+            boundary  = getattr(reader, "boundary", None)    
+        )
+    else: 
+        print(f"    Using SolverMG ({G}-groups)")
+        solver = SolverMG(
+            engine      = reader.engine,
+            materials   = reader.materials,
+            settings    = reader.solver,
+            n_groups    = G,
+            boundary    = getattr(reader, "boundary", None),
+        )
     solver.solve()
     t3 = time.time()
     print(f"    Done in {t3-t2:.2f}s")
@@ -73,7 +91,13 @@ def main(input_file):
     output_dir  = os.path.join("output", base_name)
     os.makedirs(output_dir, exist_ok = True)
     
-    out = Output2D(solver, reader)
+    if isinstance(solver, Solver2D):
+        from output_2d import Output2D
+        out = Output2D(solver, reader)
+    elif isinstance(solver, SolverMG):
+        from output_mg import OutputMG
+        out = OutputMG(solver, reader)
+        
     out.print_report()
     out.plot_all(save_dir = output_dir, show = False)
     out.save_report(save_dir = output_dir)

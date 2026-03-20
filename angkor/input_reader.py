@@ -6,13 +6,15 @@ from geometry_2d import Region, GeometryEngine
 # ============================================
 class SolverSettings:
     """stores solver configuration from input file"""
-    def __init__(self, max_iterations, convergence):
+    def __init__(self, max_iterations, convergence, buckling=0.0):
         self.max_iterations = max_iterations
         self.convergence    = convergence
+        self.buckling       = buckling
         
     def describe(self):
         print(f" Max Iterations :   {self.max_iterations}")
         print(f" Convergence    :   {self.convergence}")
+        print(f" Buckling (Bz^2):   {self.buckling}")
 # ===========================================
 # InputReader class
 # ===========================================
@@ -29,13 +31,19 @@ class InputReader:
         self.materials  = {}
         self.solver     = None 
         self.title      = "Untitled"
+        self.boundary   = {
+            "left": "vacuum",
+            "right": "vacuum",
+            "top": "vacuum",
+            "bottom": "vacuum",
+        }
         
     def read(self):
         """ 
         Our main method to read YAML file and build all objects.
         Call YAML fiel first before accessing engine or materials.
         """
-        with open(self.filepath, "r") as f:
+        with open(self.filepath, "r", encoding="utf-8") as f:
             self.data = yaml.safe_load(f)
         
         self.title = self.data.get("title", "Untitled")
@@ -43,6 +51,7 @@ class InputReader:
         self._parse_geometry()
         self._parse_materials()
         self._parse_solver()
+        self._parse_boundary()
         
         print(f" Input file read successfully!")
         print(f" TITLE: {self.title}")
@@ -60,14 +69,19 @@ class InputReader:
         for r in self.data["regions"]:
             region = Region(
                 name    = r["name"],
-                x_max   = r["x_max"],
                 x_min   = r["x_min"],
+                x_max   = r["x_max"],
                 y_min   = r["y_min"],
                 y_max   = r["y_max"],
                 material= r["material"]
             )
             self.engine.add_region(region)
+            # Debug print for each region
+            # print(f"    Added: {r['name']}  x={r['x_min']}→{r['x_max']}  "
+            #       f"y={r['y_min']}→{r['y_max']}  mat={r['material']}")
         self.engine.build_mesh(self.nx, self.ny)
+        # Final confirmation
+        # print(f"  Final regions in engine: {len(self.engine.regions)}")
     
     def _parse_materials(self):
         """Read material cross sections from YAML input file"""
@@ -84,6 +98,7 @@ class InputReader:
                     "sigma_a"    : props["sigma_a"],
                     "nu_sigma_f" : props["nu_sigma_f"],
                     "sigma_s"    : props["sigma_s"],
+                    "chi"        : props["chi"]
                 }
             else:
                 # --- 2-GROUP FORMAT ---
@@ -106,8 +121,16 @@ class InputReader:
 
         self.solver = SolverSettings(
             max_iterations = sol.get("max_iterations", 1000),
-            convergence    = sol.get("convergence", 1.0e-6)
+            convergence    = sol.get("convergence", 1.0e-6),
+            buckling       = sol.get("buckling", 0.0)
         )
+
+    def _parse_boundary(self):
+        """Read boundary conditions (optional)."""
+        bc = self.data.get("boundary_conditions", {})
+        for side in ["left", "right", "top", "bottom"]:
+            if side in bc:
+                self.boundary[side] = bc[side].lower()
 
     def summary(self):
         """Print a full summary of the loaded input."""
@@ -121,6 +144,7 @@ class InputReader:
         print(f"\n  Materials: {list(self.materials.keys())}")
         print(f"\n  Solver:")
         self.solver.describe()
+        print(f"\n  Boundary conditions: {self.boundary}")
 
 if __name__ == "__main__":
 
